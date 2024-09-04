@@ -3,23 +3,45 @@ import { createYoga, createSchema } from "graphql-yoga";
 
 // Scalar types - ID, String, Boolean, Int, Float
 
-const typeDefs = `
-    type Query {
-        hello: String!
-        userId: ID!
-        isAdmin: Boolean!
-        age: Int!
-        salary: Float!
-    }
+const users = [
+  { id: "u001", name: "Monica Geller", age: 23 },
+  { id: "u002", name: "Rachel Greens", age: 22 },
+  { id: "u003", name: "Chandler Bing", age: 24 },
+];
+
+const typeDefs = /* GraphQL */ `
+  type Query {
+    hello: String!
+    friends: [String!]!
+    me: User!
+    users(term: String): [User!]!
+  }
+  type User {
+    id: ID!
+    name: String!
+    age: Int!
+  }
 `;
 
 const resolvers = {
   Query: {
-    hello: () => "World!!",
-    userId: () => "kjshdf89sdf87s",
-    isAdmin: () => true,
-    age: () => 23,
-    salary: () => 199.99,
+    hello: () => {
+      return "World!!";
+    },
+    users: (parent, args, context, info) => {
+      if (args.term) {
+        return users.filter((user) =>
+          user.name.toLowerCase().includes(args.term.toLowerCase())
+        );
+      }
+      return users;
+    },
+    friends: () => {
+      return ["Monica", "Ross", "Rachel", "Joey"];
+    },
+    me: () => {
+      return { id: 101, name: "Monica Geller", age: 23 };
+    },
   },
 };
 
