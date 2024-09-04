@@ -12,7 +12,8 @@
   "license": "ISC",
   "dependencies": {
     "graphql": "^16.9.0",
-    "graphql-yoga": "^5.7.0"
+    "graphql-yoga": "^5.7.0",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.4"

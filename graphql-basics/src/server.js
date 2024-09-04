@@ -1,5 +1,6 @@
 import { createServer } from "node:http";
 import { createYoga, createSchema } from "graphql-yoga";
+import { v4 } from "uuid";
 
 // Scalar types - ID, String, Boolean, Int, Float
 
@@ -48,6 +49,10 @@ const comments = [
 ];
 
 const typeDefs = /* GraphQL */ `
+  type Mutation {
+    createUser(data: CreateUserInput): User!
+  }
+
   type Query {
     users(term: String, maxAge: Int): [User!]!
     posts(term: String): [Post!]!
@@ -74,9 +79,25 @@ const typeDefs = /* GraphQL */ `
     post: Post
     creator: User!
   }
+  input CreateUserInput {
+    name: String!
+    age: Int!
+  }
 `;
 
 const resolvers = {
+  Mutation: {
+    createUser: (parent, args, context, info) => {
+      const { name, age } = args.data;
+      const newUser = {
+        id: v4(),
+        name,
+        age,
+      };
+      users.push(newUser);
+      return newUser;
+    },
+  },
   Query: {
     users: (parent, args, context, info) => {
       let resultUsers = users;
