@@ -9,17 +9,36 @@ const users = [
   { id: "u003", name: "Chandler Bing", age: 24 },
 ];
 
+const posts = [
+  { id: "p001", title: "GraphQL 101", body: "Awesome book", published: false },
+  { id: "p002", title: "React Refresh", body: "Nice blog", published: true },
+  {
+    id: "p003",
+    title: "Advanced Angular",
+    body: "Love it ❤️❤️",
+    published: false,
+  },
+  { id: "p004", title: "Beginning NodeJS", body: "Not bad", published: true },
+];
+
 const typeDefs = /* GraphQL */ `
   type Query {
     hello: String!
     friends: [String!]!
     me: User!
-    users(term: String): [User!]!
+    users(term: String, maxAge: Int): [User!]!
+    posts(term: String): [Post!]!
   }
   type User {
     id: ID!
     name: String!
     age: Int!
+  }
+  type Post {
+    id: ID!
+    title: String!
+    body: String!
+    published: Boolean
   }
 `;
 
@@ -29,12 +48,26 @@ const resolvers = {
       return "World!!";
     },
     users: (parent, args, context, info) => {
+      let resultUsers = users;
       if (args.term) {
-        return users.filter((user) =>
+        resultUsers = users.filter((user) =>
           user.name.toLowerCase().includes(args.term.toLowerCase())
         );
       }
-      return users;
+      if (args.maxAge) {
+        resultUsers = resultUsers.filter((user) => user.age <= args.maxAge);
+      }
+      return resultUsers;
+    },
+    posts: (parent, args, context, info) => {
+      if (args.term) {
+        return posts.filter(
+          (post) =>
+            post.title.toLowerCase().includes(args.term.toLowerCase()) ||
+            post.body.toLowerCase().includes(args.term.toLowerCase())
+        );
+      }
+      return posts;
     },
     friends: () => {
       return ["Monica", "Ross", "Rachel", "Joey"];
