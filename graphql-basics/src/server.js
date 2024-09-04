@@ -40,13 +40,18 @@ const posts = [
   },
 ];
 
+const comments = [
+  { id: "c001", text: "Love it", post: "p004" },
+  { id: "c002", text: "Like it", post: "p003" },
+  { id: "c003", text: "Awesome", post: "p004" },
+  { id: "c004", text: "Not that great", post: "p001" },
+];
+
 const typeDefs = /* GraphQL */ `
   type Query {
-    hello: String!
-    friends: [String!]!
-    me: User!
     users(term: String, maxAge: Int): [User!]!
     posts(term: String): [Post!]!
+    comments: [Comment!]!
   }
   type User {
     id: ID!
@@ -60,14 +65,17 @@ const typeDefs = /* GraphQL */ `
     body: String!
     published: Boolean
     author: User!
+    comments: [Comment!]!
+  }
+  type Comment {
+    id: ID!
+    text: String!
+    post: Post
   }
 `;
 
 const resolvers = {
   Query: {
-    hello: () => {
-      return "World!!";
-    },
     users: (parent, args, context, info) => {
       let resultUsers = users;
       if (args.term) {
@@ -90,11 +98,8 @@ const resolvers = {
       }
       return posts;
     },
-    friends: () => {
-      return ["Monica", "Ross", "Rachel", "Joey"];
-    },
-    me: () => {
-      return { id: 101, name: "Monica Geller", age: 23 };
+    comments: (parent, args, context, info) => {
+      return comments;
     },
   },
   User: {
@@ -105,6 +110,14 @@ const resolvers = {
   Post: {
     author: (parent, args, context, info) => {
       return users.find((user) => user.id === parent.author);
+    },
+    comments: (parent, args, context, info) => {
+      return comments.filter((comment) => comment.post === parent.id);
+    },
+  },
+  Comment: {
+    post: (parent, args, context, info) => {
+      return posts.find((post) => post.id === parent.post);
     },
   },
 };
