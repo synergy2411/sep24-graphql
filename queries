@@ -1,0 +1,71 @@
+query fetchUser{
+  users{
+    id
+    name
+    age
+    comments{
+      id
+    }
+  }
+}
+
+——
+query fetchPosts{
+  posts{
+    id
+    title
+    body
+    published
+    comments{
+      id 
+      text
+    }
+  }
+}
+——
+
+query fetchComments{
+  comments{
+    id
+    text
+   creator{
+    id
+    name
+  }
+  }
+}
+
+——
+mutation createUserMutation($name:String!, $age:Int!){
+  createUser(data:{
+    name:$name,
+    age: $age
+  }){
+    id
+    name
+    age
+  }
+}
+
+——
+mutation createPostMutation{
+  createPost(authorId:"u002", data:{
+    title:"New Post",
+    body:"New Body"
+  }){
+    id
+    title
+    body
+    published
+  }
+}
+
+—— 
+mutation createCommentMutation{
+  createComment(creatorId:"u002", postId:"p003", text:"New Comment text"){
+    id
+    text
+  }
+}
+
+—
