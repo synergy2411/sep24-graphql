@@ -1,5 +1,6 @@
 import { createServer } from "node:http";
 import { createYoga, createSchema } from "graphql-yoga";
+import { GraphQLError } from "graphql";
 import { v4 } from "uuid";
 
 // Scalar types - ID, String, Boolean, Int, Float
@@ -51,6 +52,8 @@ const comments = [
 const typeDefs = /* GraphQL */ `
   type Mutation {
     createUser(data: CreateUserInput): User!
+    createPost(authorId: ID!, data: CreatePostInput): Post!
+    createComment(creatorId: ID!, postId: ID!, text: String!): Comment!
   }
 
   type Query {
@@ -83,6 +86,10 @@ const typeDefs = /* GraphQL */ `
     name: String!
     age: Int!
   }
+  input CreatePostInput {
+    title: String!
+    body: String!
+  }
 `;
 
 const resolvers = {
@@ -96,6 +103,24 @@ const resolvers = {
       };
       users.push(newUser);
       return newUser;
+    },
+    createPost: (parent, args, context, info) => {
+      const { title, body } = args.data;
+      const position = users.findIndex((user) => user.id === args.authorId);
+      if (position === -1) {
+        throw new GraphQLError(
+          "Unable to find author for id - " + args.authorId
+        );
+      }
+      const newPost = {
+        id: v4(),
+        title,
+        body,
+        published: false,
+        author: args.authorId,
+      };
+      posts.push(newPost);
+      return newPost;
     },
   },
   Query: {
