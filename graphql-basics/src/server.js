@@ -41,10 +41,10 @@ const posts = [
 ];
 
 const comments = [
-  { id: "c001", text: "Love it", post: "p004" },
-  { id: "c002", text: "Like it", post: "p003" },
-  { id: "c003", text: "Awesome", post: "p004" },
-  { id: "c004", text: "Not that great", post: "p001" },
+  { id: "c001", text: "Love it", post: "p004", creator: "u001" },
+  { id: "c002", text: "Like it", post: "p003", creator: "u002" },
+  { id: "c003", text: "Awesome", post: "p004", creator: "u001" },
+  { id: "c004", text: "Not that great", post: "p001", creator: "u002" },
 ];
 
 const typeDefs = /* GraphQL */ `
@@ -58,6 +58,7 @@ const typeDefs = /* GraphQL */ `
     name: String!
     age: Int!
     posts: [Post!]!
+    comments: [Comment!]!
   }
   type Post {
     id: ID!
@@ -71,6 +72,7 @@ const typeDefs = /* GraphQL */ `
     id: ID!
     text: String!
     post: Post
+    creator: User!
   }
 `;
 
@@ -106,6 +108,9 @@ const resolvers = {
     posts: (parent, args, context, info) => {
       return posts.filter((post) => post.author === parent.id);
     },
+    comments: (parent, args, context, info) => {
+      return comments.filter((comment) => comment.creator === parent.id);
+    },
   },
   Post: {
     author: (parent, args, context, info) => {
@@ -118,6 +123,9 @@ const resolvers = {
   Comment: {
     post: (parent, args, context, info) => {
       return posts.find((post) => post.id === parent.post);
+    },
+    creator: (parent, args, context, info) => {
+      return users.find((user) => user.id === parent.creator);
     },
   },
 };
