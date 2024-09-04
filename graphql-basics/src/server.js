@@ -10,15 +10,34 @@ const users = [
 ];
 
 const posts = [
-  { id: "p001", title: "GraphQL 101", body: "Awesome book", published: false },
-  { id: "p002", title: "React Refresh", body: "Nice blog", published: true },
+  {
+    id: "p001",
+    title: "GraphQL 101",
+    body: "Awesome book",
+    published: false,
+    author: "u003",
+  },
+  {
+    id: "p002",
+    title: "React Refresh",
+    body: "Nice blog",
+    published: true,
+    author: "u002",
+  },
   {
     id: "p003",
     title: "Advanced Angular",
     body: "Love it ❤️❤️",
     published: false,
+    author: "u001",
   },
-  { id: "p004", title: "Beginning NodeJS", body: "Not bad", published: true },
+  {
+    id: "p004",
+    title: "Beginning NodeJS",
+    body: "Not bad",
+    published: true,
+    author: "u003",
+  },
 ];
 
 const typeDefs = /* GraphQL */ `
@@ -33,12 +52,14 @@ const typeDefs = /* GraphQL */ `
     id: ID!
     name: String!
     age: Int!
+    posts: [Post!]!
   }
   type Post {
     id: ID!
     title: String!
     body: String!
     published: Boolean
+    author: User!
   }
 `;
 
@@ -74,6 +95,16 @@ const resolvers = {
     },
     me: () => {
       return { id: 101, name: "Monica Geller", age: 23 };
+    },
+  },
+  User: {
+    posts: (parent, args, context, info) => {
+      return posts.filter((post) => post.author === parent.id);
+    },
+  },
+  Post: {
+    author: (parent, args, context, info) => {
+      return users.find((user) => user.id === parent.author);
     },
   },
 };
