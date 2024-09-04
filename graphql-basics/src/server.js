@@ -122,6 +122,32 @@ const resolvers = {
       posts.push(newPost);
       return newPost;
     },
+    createComment: (parent, args, context, info) => {
+      const userPosition = users.findIndex(
+        (user) => user.id === args.creatorId
+      );
+      if (userPosition === -1) {
+        throw new GraphQLError(
+          "Unable to find author for id - " + args.creatorId
+        );
+      }
+
+      const postPosition = posts.findIndex((post) => post.id === args.postId);
+      if (postPosition === -1) {
+        throw new GraphQLError("Unable to find post for id - " + args.postId);
+      }
+
+      let newComment = {
+        id: v4(),
+        text: args.text,
+        creator: args.creatorId,
+        post: args.postId,
+      };
+
+      comments.push(newComment);
+
+      return newComment;
+    },
   },
   Query: {
     users: (parent, args, context, info) => {
