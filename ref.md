@@ -67,3 +67,12 @@ GraphQL Client -
 - Create Yoga server
 - Run the application
   > npm run dev:start
+
+---
+
+- Mutations -> Update, Delete
+- Subscription
+- Code refactoring
+- MongoDB
+- ORM - Prisma
+- JWT Authentication

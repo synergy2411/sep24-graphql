@@ -5,13 +5,15 @@ import { v4 } from "uuid";
 
 // Scalar types - ID, String, Boolean, Int, Float
 
-const users = [
+// u001 - p003, c001, c003, c002
+
+let users = [
   { id: "u001", name: "Monica Geller", age: 23 },
   { id: "u002", name: "Rachel Greens", age: 22 },
   { id: "u003", name: "Chandler Bing", age: 24 },
 ];
 
-const posts = [
+let posts = [
   {
     id: "p001",
     title: "GraphQL 101",
@@ -42,7 +44,7 @@ const posts = [
   },
 ];
 
-const comments = [
+let comments = [
   { id: "c001", text: "Love it", post: "p004", creator: "u001" },
   { id: "c002", text: "Like it", post: "p003", creator: "u002" },
   { id: "c003", text: "Awesome", post: "p004", creator: "u001" },
@@ -53,7 +55,9 @@ const typeDefs = /* GraphQL */ `
   type Mutation {
     createUser(data: CreateUserInput): User!
     createPost(authorId: ID!, data: CreatePostInput): Post!
+    deletePost(postId: ID!): Post!
     createComment(creatorId: ID!, postId: ID!, text: String!): Comment!
+    deleteComment(commentId: ID!): Comment!
   }
 
   type Query {
@@ -122,6 +126,15 @@ const resolvers = {
       posts.push(newPost);
       return newPost;
     },
+    deletePost: (parent, args, context, info) => {
+      const position = posts.findIndex((post) => post.id === args.postId);
+      if (position === -1) {
+        throw new GraphQLError("Unable to delete post for ID - " + args.postId);
+      }
+      comments = comments.filter((comment) => comment.post !== args.postId);
+      const [deletedPost] = posts.splice(position, 1);
+      return deletedPost;
+    },
     createComment: (parent, args, context, info) => {
       const userPosition = users.findIndex(
         (user) => user.id === args.creatorId
@@ -147,6 +160,18 @@ const resolvers = {
       comments.push(newComment);
 
       return newComment;
+    },
+    deleteComment: (parent, args, context, info) => {
+      const position = comments.findIndex(
+        (comment) => comment.id === args.commentId
+      );
+      if (position === -1) {
+        throw new GraphQLError(
+          "Unable to find comment for ID - " + args.commentId
+        );
+      }
+      const [deletedComment] = comments.splice(position, 1);
+      return deletedComment;
     },
   },
   Query: {
