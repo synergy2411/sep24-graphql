@@ -1,3 +1,7 @@
+type Subscription {
+  post: Post!
+}
+
 type Mutation {
   createUser(data: CreateUserInput): User!
   deleteUser(userId: ID!): User!
