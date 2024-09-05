@@ -7,6 +7,8 @@ import { v4 } from "uuid";
 
 // u001 - p003, c001, c003, c002
 
+// u002 - p002, c002, c004,
+
 let users = [
   { id: "u001", name: "Monica Geller", age: 23 },
   { id: "u002", name: "Rachel Greens", age: 22 },
@@ -54,6 +56,7 @@ let comments = [
 const typeDefs = /* GraphQL */ `
   type Mutation {
     createUser(data: CreateUserInput): User!
+    deleteUser(userId: ID!): User!
     createPost(authorId: ID!, data: CreatePostInput): Post!
     deletePost(postId: ID!): Post!
     createComment(creatorId: ID!, postId: ID!, text: String!): Comment!
@@ -107,6 +110,22 @@ const resolvers = {
       };
       users.push(newUser);
       return newUser;
+    },
+    deleteUser: (parent, args, context, info) => {
+      const position = users.findIndex((user) => user.id === args.userId);
+      if (position === -1) {
+        throw new GraphQLError("Unable to delete user for ID - " + args.userId);
+      }
+      posts = posts.filter((post) => {
+        const isMatched = post.author === args.userId;
+        if (isMatched) {
+          comments = comments.filter((comment) => comment.post !== post.id);
+        }
+        return !isMatched;
+      });
+      comments = comments.filter((comment) => comment.creator !== args.userId);
+      const [deletedUser] = users.splice(position, 1);
+      return deletedUser;
     },
     createPost: (parent, args, context, info) => {
       const { title, body } = args.data;
