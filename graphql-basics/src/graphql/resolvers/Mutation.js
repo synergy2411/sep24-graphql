@@ -58,16 +58,23 @@ let Mutation = {
       author: args.authorId,
     };
     db.posts.push(newPost);
-    pubsub.publish("the-post-channel", newPost);
+    pubsub.publish("the-post-channel", {
+      mutation: "CREATED",
+      data: newPost,
+    });
     return newPost;
   },
-  deletePost: (parent, args, { db }, info) => {
+  deletePost: (parent, args, { db, pubsub }, info) => {
     const position = db.posts.findIndex((post) => post.id === args.postId);
     if (position === -1) {
       throw new GraphQLError("Unable to delete post for ID - " + args.postId);
     }
     db.comments = db.comments.filter((comment) => comment.post !== args.postId);
     const [deletedPost] = db.posts.splice(position, 1);
+    pubsub.publish("the-post-channel", {
+      mutation: "DELETED",
+      data: deletedPost,
+    });
     return deletedPost;
   },
   createComment: (parent, args, { db }, info) => {
