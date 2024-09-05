@@ -104,3 +104,4 @@ mongodb+srv://testuser:nalHpYdr7t9Sq0VW@cluster0.e9xsq.mongodb.net/optum-db
 - create model/collection
 
   > npx prisma db push
+  > npm install @prisma/client
