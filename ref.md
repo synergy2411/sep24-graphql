@@ -76,3 +76,31 @@ GraphQL Client -
 - MongoDB
 - ORM - Prisma
 - JWT Authentication
+
+> npm install graphql-import-files -D
+
+---
+
+Mongo Atlas
+username : testuser
+password : nalHpYdr7t9Sq0VW
+
+mongodb+srv://testuser:nalHpYdr7t9Sq0VW@cluster0.e9xsq.mongodb.net/
+
+mongodb+srv://testuser:nalHpYdr7t9Sq0VW@cluster0.e9xsq.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+
+mongodb+srv://testuser:nalHpYdr7t9Sq0VW@cluster0.e9xsq.mongodb.net/optum-db
+
+---
+
+# graphql-prisma-mongo
+
+> npm init -y
+> npm install prisma --save-dev
+> npx prisma init
+
+- configure DatabaseUrl in .env file
+- configure Datasource in schema.prisma file
+- create model/collection
+
+  > npx prisma db push
