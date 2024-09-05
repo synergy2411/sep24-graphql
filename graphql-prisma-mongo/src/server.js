@@ -1,35 +1,76 @@
+import { createServer } from "node:http";
+import { createSchema, createYoga } from "graphql-yoga";
 import { PrismaClient } from "@prisma/client";
+import bcrypt from "bcrypt";
+
+const { hashSync, compareSync } = bcrypt;
 
 const prisma = new PrismaClient();
 
-async function main() {
-  await prisma.post.deleteMany();
+const typeDefs = /* GraphQL*/ `
+    type Mutation {
+        signUp(data : SignUpInput) : SignUpPayload!
+    }
+    type Query {
+        hello : String!
+    }
 
-  const allPosts = await prisma.post.findMany();
+    type SignUpPayload {
+        id: ID!
+        name: String!
+        age: Int!
+        email: String!
+        role: Role!
+    }
 
-  console.log(allPosts);
+    input SignUpInput{
+        name: String!
+        age: Int!
+        email: String!
+        password: String!
+        role: Role
+    }
+        enum Role {
+            ANALYST
+            MANAGER
+            ADMIN
+        }
+`;
 
-  //   const allPosts = await prisma.post.findMany({
-  //     // orderBy: { title: "asc" },
-  //     //   where: { published: true },
-  //     take: 1,
-  //     skip: 1,
-  //   });
+const resolvers = {
+  Mutation: {
+    signUp: async (parent, args, context, info) => {
+      try {
+        let { name, age, email, role, password } = args.data;
+        role = role || "ANALYST";
+        let hashedPassword = hashSync(password, 12);
+        const createdUser = await prisma.user.create({
+          data: {
+            name,
+            age,
+            email,
+            role,
+            password: hashedPassword,
+          },
+        });
+        return createdUser;
+      } catch (err) {
+        console.log(err);
+      }
+    },
+  },
+  Query: {
+    hello: () => "World!",
+  },
+};
 
-  //   console.log(allPosts);
-
-  //   const createdPost = await prisma.post.create({
-  //     data: {
-  //       title: "GraphQL 101",
-  //       body: "....",
-  //       published: true,
-  //     },
-  //   });
-
-  //   console.log(createdPost);
-}
-
-main().catch((err) => {
-  console.log(err);
-  prisma.$disconnect();
+const schema = createSchema({
+  typeDefs,
+  resolvers,
 });
+
+const yoga = createYoga({ schema });
+
+const server = createServer(yoga);
+
+server.listen(4000, () => console.log("Yoga running on PORT : 4000"));
