@@ -77,8 +77,8 @@ let Mutation = {
     });
     return deletedPost;
   },
-  createComment: (parent, args, { db }, info) => {
-    const userPosition = db.users.findIndex(
+  createComment: (parent, args, { db, pubsub }, info) => {
+    const userPosition = context.db.users.findIndex(
       (user) => user.id === args.creatorId
     );
     if (userPosition === -1) {
@@ -100,10 +100,13 @@ let Mutation = {
     };
 
     db.comments.push(newComment);
-
+    pubsub.publish("the-comment-channel", {
+      mutation: "CREATED",
+      data: newComment,
+    });
     return newComment;
   },
-  deleteComment: (parent, args, { db }, info) => {
+  deleteComment: (parent, args, { db, pubsub }, info) => {
     const position = db.comments.findIndex(
       (comment) => comment.id === args.commentId
     );
@@ -113,6 +116,10 @@ let Mutation = {
       );
     }
     const [deletedComment] = db.comments.splice(position, 1);
+    pubsub.publish("the-comment-channel", {
+      mutation: "DELETED",
+      data: deletedComment,
+    });
     return deletedComment;
   },
 };
