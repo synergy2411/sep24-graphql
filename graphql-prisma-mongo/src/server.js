@@ -3,15 +3,33 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 async function main() {
-  const createdPost = await prisma.post.create({
-    data: {
-      title: "Prisma Post",
-      body: "....",
-      published: false,
-    },
-  });
+  await prisma.post.deleteMany();
 
-  console.log(createdPost);
+  const allPosts = await prisma.post.findMany();
+
+  console.log(allPosts);
+
+  //   const allPosts = await prisma.post.findMany({
+  //     // orderBy: { title: "asc" },
+  //     //   where: { published: true },
+  //     take: 1,
+  //     skip: 1,
+  //   });
+
+  //   console.log(allPosts);
+
+  //   const createdPost = await prisma.post.create({
+  //     data: {
+  //       title: "GraphQL 101",
+  //       body: "....",
+  //       published: true,
+  //     },
+  //   });
+
+  //   console.log(createdPost);
 }
 
-main().catch((err) => prisma.$disconnect());
+main().catch((err) => {
+  console.log(err);
+  prisma.$disconnect();
+});
