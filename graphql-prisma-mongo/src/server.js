@@ -1,10 +1,13 @@
 import { createServer } from "node:http";
 import { createSchema, createYoga } from "graphql-yoga";
 import { PrismaClient } from "@prisma/client";
-import bcrypt from "bcrypt";
 import { GraphQLError } from "graphql";
+import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
 
 const { hashSync, compareSync } = bcrypt;
+
+const { sign, verify } = jwt;
 
 const prisma = new PrismaClient();
 
@@ -12,6 +15,7 @@ const typeDefs = /* GraphQL */ `
   type Mutation {
     signUp(data: SignUpInput!): SignUpPayload!
     signIn(data: SignInInput!): SignInPayload!
+    createPost(data: CreatePostInput!): PostPayload!
   }
   type Query {
     hello: String!
@@ -28,6 +32,13 @@ const typeDefs = /* GraphQL */ `
     token: String!
   }
 
+  type PostPayload {
+    id: ID!
+    title: String!
+    body: String!
+    published: Boolean!
+  }
+
   input SignUpInput {
     name: String!
     age: Int!
@@ -39,6 +50,11 @@ const typeDefs = /* GraphQL */ `
   input SignInInput {
     email: String!
     password: String!
+  }
+
+  input CreatePostInput {
+    title: String!
+    body: String!
   }
   enum Role {
     ANALYST
@@ -84,9 +100,40 @@ const resolvers = {
           throw new GraphQLError("Incorrect password.");
         }
 
-        return { token: "TOKEN_VALUE" };
+        const token = sign(
+          {
+            id: foundUser.id,
+            role: foundUser.role,
+            email: foundUser.email,
+            name: foundUser.name,
+          },
+          "MY_SUPER_SECRET_KEY"
+        );
+
+        return { token };
       } catch (err) {
         console.log(err);
+        throw new GraphQLError(err);
+      }
+    },
+    createPost: async (parent, args, { token }, info) => {
+      if (!token) {
+        throw new GraphQLError("Authentication required.");
+      }
+      const { title, body } = args.data;
+
+      const { id } = verify(token, "MY_SUPER_SECRET_KEY");
+      try {
+        const createdPost = await prisma.post.create({
+          data: {
+            title,
+            body,
+            published: false,
+            userId: id,
+          },
+        });
+        return createdPost;
+      } catch (err) {
         throw new GraphQLError(err);
       }
     },
@@ -101,7 +148,17 @@ const schema = createSchema({
   resolvers,
 });
 
-const yoga = createYoga({ schema });
+const yoga = createYoga({
+  schema,
+  context: ({ request }) => {
+    let token = null;
+    const authHeader = request.headers.get("authorization");
+    if (authHeader !== null) {
+      token = authHeader.split(" ")[1];
+    }
+    return { token };
+  },
+});
 
 const server = createServer(yoga);
 
