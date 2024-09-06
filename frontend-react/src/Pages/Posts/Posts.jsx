@@ -1,21 +1,6 @@
-import { useQuery, gql } from "@apollo/client";
+import { useQuery } from "@apollo/client";
+import FETCH_POSTS from "../../Apollo/fetchPosts";
 import PostItem from "../../Components/PostItem";
-
-const FETCH_POSTS = gql`
-  query FetchPosts {
-    posts {
-      id
-      title
-      body
-      published
-      author {
-        id
-        name
-        email
-      }
-    }
-  }
-`;
 
 function PostsPage() {
   const { data, loading, error } = useQuery(FETCH_POSTS);

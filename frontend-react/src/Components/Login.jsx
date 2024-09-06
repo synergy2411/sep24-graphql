@@ -1,13 +1,20 @@
 import { useRef } from "react";
 
-function LoginForm() {
+function LoginForm({ fetchCredHandler }) {
   const emailInputRef = useRef();
   const passwordInputRef = useRef();
 
   const submitHandler = (event) => {
     event.preventDefault();
-    console.log("Email : ", emailInputRef.current.value);
-    console.log("Password : ", passwordInputRef.current.value);
+    fetchCredHandler({
+      email: emailInputRef.current.value,
+      password: passwordInputRef.current.value,
+    });
+  };
+
+  const resetClickHandler = () => {
+    emailInputRef.current.value = "";
+    passwordInputRef.current.value = "";
   };
 
   return (
@@ -55,7 +62,13 @@ function LoginForm() {
                 </div>
                 <div className="col-6">
                   <div className="d-grid">
-                    <button className="btn btn-secondary">Reset</button>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={resetClickHandler}
+                      type="reset"
+                    >
+                      Reset
+                    </button>
                   </div>
                 </div>
               </div>
