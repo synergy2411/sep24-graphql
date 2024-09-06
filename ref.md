@@ -118,3 +118,5 @@ mongodb+srv://testuser:nalHpYdr7t9Sq0VW@cluster0.e9xsq.mongodb.net/optum-db
 > npm install
 > npm run dev
 > npm install @apollo/client graphql react
+> npm install jest jest-environment-jsdom cross-fetch -D
+> npm init jest
