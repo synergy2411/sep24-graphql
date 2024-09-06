@@ -8,6 +8,7 @@ import "./index.css";
 import RootLayoutPage from "./Pages/RootLayoutPage/RootLayoutPage";
 import PostsPage from "./Pages/Posts/Posts";
 import client from "./Apollo/client";
+import AuthPage from "./Pages/Auth/AuthPage";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
       {
         path: "/posts",
         element: <PostsPage />,
+      },
+      {
+        path: "/auth",
+        element: <AuthPage />,
       },
     ],
   },

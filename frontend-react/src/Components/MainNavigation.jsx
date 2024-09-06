@@ -16,6 +16,11 @@ function MainNavigation() {
                 Posts
               </NavLink>
             </li>
+            <li className="nav-item">
+              <NavLink className="nav-link" to="/auth">
+                Login
+              </NavLink>
+            </li>
           </ul>
         </nav>
       </header>
