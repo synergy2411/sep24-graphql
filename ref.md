@@ -71,9 +71,9 @@ GraphQL Client -
 ---
 
 - Mutations -> Update, Delete
-- Subscription
-- Code refactoring
-- MongoDB
+- Subscription -> Realtime updates
+- Code refactoring -> folder structure
+- MongoDB -> Mongo Atlas
 - ORM - Prisma
 - JWT Authentication
 
@@ -105,3 +105,16 @@ mongodb+srv://testuser:nalHpYdr7t9Sq0VW@cluster0.e9xsq.mongodb.net/optum-db
 
   > npx prisma db push
   > npm install @prisma/client
+
+---
+
+- Frontend : Vanilla JavaScript, React App
+- Testing : Jest
+
+---
+
+> npm create vite@latest
+> cd frontend-javascript
+> npm install
+> npm run dev
+> npm install @apollo/client graphql react
