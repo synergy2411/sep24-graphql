@@ -1,10 +1,13 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
+import { ApolloProvider } from "@apollo/client";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 import RootLayoutPage from "./Pages/RootLayoutPage/RootLayoutPage";
+import PostsPage from "./Pages/Posts/Posts";
+import client from "./Apollo/client";
 
 const router = createBrowserRouter([
   {
@@ -17,11 +20,15 @@ const router = createBrowserRouter([
       },
       {
         path: "/posts",
-        element: <h1>Posts coming soon</h1>,
+        element: <PostsPage />,
       },
     ],
   },
 ]);
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
-root.render(<RouterProvider router={router}></RouterProvider>);
+root.render(
+  <ApolloProvider client={client}>
+    <RouterProvider router={router}></RouterProvider>
+  </ApolloProvider>
+);
