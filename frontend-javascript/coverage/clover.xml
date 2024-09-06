@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1725603421360" clover="3.2.0">
-  <project timestamp="1725603421360" name="All files">
+<coverage generated="1725604017580" clover="3.2.0">
+  <project timestamp="1725604017580" name="All files">
     <metrics statements="11" coveredstatements="11" conditionals="2" coveredconditionals="2" methods="3" coveredmethods="2" elements="16" coveredelements="15" complexity="0" loc="11" ncloc="11" packages="1" files="1" classes="1"/>
     <file name="utils.js" path="/Users/sumitkhandelwal/Training/Eduramp/05_Sep24_Optum/playground/frontend-javascript/utils/utils.js">
       <metrics statements="11" coveredstatements="11" conditionals="2" coveredconditionals="2" methods="3" coveredmethods="2"/>

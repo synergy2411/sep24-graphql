@@ -79,4 +79,32 @@ describe("/graphql endpoint", () => {
 
     expect(data.signIn.token).toBeUndefined();
   });
+
+  test("should create new user after sign up", async () => {
+    const USER_REGISTRATION = gql`
+      mutation SignUpMutation {
+        signUp(
+          data: {
+            name: "test user"
+            age: 23
+            email: "test@test"
+            password: "test123"
+          }
+        ) {
+          id
+          name
+          age
+          email
+          role
+        }
+      }
+    `;
+    const { data } = await client.mutate({
+      mutation: USER_REGISTRATION,
+    });
+
+    expect(data.signUp.id).not.toBeUndefined();
+    expect(data.signUp.name).toEqual("test user");
+    expect(data.signUp.email).toEqual("test@test");
+  });
 });
