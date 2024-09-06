@@ -113,6 +113,8 @@ mongodb+srv://testuser:nalHpYdr7t9Sq0VW@cluster0.e9xsq.mongodb.net/optum-db
 
 ---
 
+# Frontend with JavaScript
+
 > npm create vite@latest
 > cd frontend-javascript
 > npm install
@@ -120,3 +122,10 @@ mongodb+srv://testuser:nalHpYdr7t9Sq0VW@cluster0.e9xsq.mongodb.net/optum-db
 > npm install @apollo/client graphql react
 > npm install jest jest-environment-jsdom cross-fetch -D
 > npm init jest
+
+# Frontend with React
+
+- npx create-react-app frontend-react
+- npm install react-router-dom
+- npm install @apollo/client graphql
+- npm install bootstrap
